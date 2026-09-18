@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- TÙY CHỈNH GIAO DIỆN (Chữ màu đen sắc nét, Ô điền tên nền trắng viền đen, Nộp bài & Chọn đáp án nền nhạt chữ đen) ---
+# --- TÙY CHỈNH GIAO DIỆN (CSS Tươi tắn, Chữ màu đen sắc nét, Ô điền tên nền trắng viền đen, Nút nộp bài & Chọn đáp án nền nhạt) ---
 st.markdown("""
 <style>
     /* 1. Ẩn hoàn toàn Thanh bên (Sidebar) & Header/Logo/Toolbar góc phải trên */
@@ -101,47 +101,56 @@ st.markdown("""
         font-weight: 700 !important;
     }
 
-    /* Chỗ Nộp bài: Nền màu nhạt, chữ đen */
-    div[data-testid="stFormSubmitButton"] button {
+    /* Nút Nộp bài kiểm tra: Nền màu nhạt, chữ đen */
+    div.stButton > button[kind="formSubmit"] {
         background-color: #FFE4E6 !important;
         color: #000000 !important;
         border: 2px solid #FDA4AF !important;
-        border-radius: 12px !important;
-        font-size: 1.2rem !important;
+        border-radius: 10px !important;
+        font-size: 1.1rem !important;
         font-weight: 900 !important;
-        padding: 12px 20px !important;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.08) !important;
-        transition: all 0.2s ease !important;
+        padding: 10px 20px !important;
+        box-shadow: 0 2px 6px rgba(244, 63, 94, 0.15) !important;
     }
-    div[data-testid="stFormSubmitButton"] button:hover {
+    div.stButton > button[kind="formSubmit"]:hover {
         background-color: #FECDD3 !important;
         border-color: #F43F5E !important;
         color: #000000 !important;
     }
 
-    /* Nút bấm chuyển thẻ Flashcard (Nền trắng, chữ đen, viền xám) */
-    .stButton button {
+    /* Nút bấm chuyển thẻ / xem bảng: Nền trắng, chữ đen, viền rõ ràng */
+    div.stButton > button {
         background-color: #FFFFFF !important;
         color: #000000 !important;
-        border: 2px solid #CBD5E1 !important;
-        border-radius: 10px !important;
-        font-weight: 800 !important;
+        border: 1.5px solid #CBD5E1 !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
         font-size: 0.95rem !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
     }
-    .stButton button:hover {
+    div.stButton > button:hover {
         background-color: #F1F5F9 !important;
         border-color: #94A3B8 !important;
         color: #000000 !important;
     }
 
-    /* 3D Flip Flashcard kiểu Quizlet */
+    /* Tiêu đề câu hỏi màu xanh đậm nổi bật */
+    .question-title {
+        color: #1E3A8A !important;
+        font-size: 1.1rem !important;
+        font-weight: 800 !important;
+        margin-top: 10px !important;
+        margin-bottom: 6px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Flashcard 3D Flip Card Style (Quizlet Model) */
     .flip-card {
         background-color: transparent;
         width: 100%;
+        max-width: 500px;
         height: 260px;
         perspective: 1000px;
-        margin: 10px 0 20px 0;
+        margin: 15px auto;
         cursor: pointer;
     }
     .flip-card-inner {
@@ -149,10 +158,10 @@ st.markdown("""
         width: 100%;
         height: 100%;
         text-align: center;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.6s;
         transform-style: preserve-3d;
     }
-    .flip-card:hover .flip-card-inner, .flip-card:active .flip-card-inner {
+    .flip-card:hover .flip-card-inner {
         transform: rotateY(180deg);
     }
     .flip-card-front, .flip-card-back {
@@ -161,93 +170,81 @@ st.markdown("""
         height: 100%;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
-        border-radius: 18px;
-        padding: 20px 15px;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     }
     .flip-card-front {
         background: #FFFFFF;
-        border: 3px solid #FF8A8A;
-        color: #000000;
+        border: 3px solid #F472B6;
     }
     .flip-card-back {
-        background: #FFF5F5;
-        border: 3px solid #48BB78;
-        color: #000000;
+        background: #F0FDF4;
+        border: 3px solid #22C55E;
         transform: rotateY(180deg);
     }
     .card-hanzi {
-        font-size: 4rem;
+        font-size: 3.8rem;
         color: #000000 !important;
         font-weight: 900;
         margin-bottom: 6px;
+        line-height: 1.1;
     }
     .card-pinyin-back {
         font-size: 1.4rem;
-        color: #D32F2F !important;
+        color: #DC2626 !important;
         font-weight: 800;
         margin-bottom: 4px;
     }
     .card-meaning {
-        font-size: 1.3rem;
-        color: #000000 !important;
-        font-weight: 800;
-    }
-    .card-example {
-        font-size: 1.05rem;
+        font-size: 1.25rem;
         color: #1E3A8A !important;
-        font-weight: 700;
-        margin-top: 8px;
-        background-color: #EFF6FF;
-        padding: 6px 12px;
-        border-radius: 8px;
-        border-left: 3px solid #3B82F6;
+        font-weight: 800;
     }
     .card-pos {
         display: inline-block;
-        background-color: #E6FFFA;
-        color: #000000 !important;
-        border: 1px solid #00695C;
-        padding: 2px 10px;
+        background-color: #E0E7FF;
+        color: #1E1B4B !important;
+        border: 1px solid #6366F1;
+        padding: 2px 8px;
         border-radius: 8px;
         font-size: 0.85rem;
-        font-weight: 800;
-        margin-top: 4px;
+        font-weight: 700;
+        margin-left: 6px;
+    }
+    .card-example {
+        font-size: 0.95rem;
+        color: #15803D !important;
+        font-weight: 700;
+        margin-top: 8px;
+        background-color: #DCFCE7;
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #86EFAC;
     }
 
     /* Các Tab Bài tập có màu Hồng Nhạt Pastel khi kích hoạt */
     .stTabs [data-baseweb="tab-list"] {
         gap: 6px;
-        border-bottom: 2px solid #FBCFE8 !important;
+        margin-bottom: 12px;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 44px;
+        height: 42px;
         white-space: nowrap;
         background-color: #F1F5F9;
         border-radius: 10px 10px 0px 0px;
         padding: 6px 12px;
         font-weight: 800;
         color: #000000 !important;
-        border: 1px solid #CBD5E1;
     }
     .stTabs [aria-selected="true"] {
         background-color: #FFD1DC !important;
-        color: #831843 !important;
-        border: 2px solid #F472B6 !important;
-        border-bottom: none !important;
-    }
-
-    /* Câu hỏi có màu đậm (xanh đậm) */
-    .question-title {
-        color: #1E3A8A !important;
-        font-size: 1.1rem !important;
-        font-weight: 900 !important;
-        margin-top: 10px !important;
-        margin-bottom: 6px !important;
+        color: #881337 !important;
+        border-bottom: 3px solid #F43F5E !important;
     }
 
     /* Dòng chữ cô Bảo Ngọc màu Tím Pastel Đậm trang trọng */
@@ -325,40 +322,35 @@ QUIZ_TAB1 = [
     {"q": "20. Từ '被' dùng trong loại câu nào?", "options": ["Câu bị động", "Câu so sánh", "Câu tồn tại", "Câu nghi vấn"], "ans": "Câu bị động", "exp": "被 (bèi) là giới từ chỉ bị động (bị, được)."}
 ]
 
-# --- TAB 2: ĐIỀN VÀO CHỖ TRỐNG (20 CÂU) ---
+# --- TAB 2: ĐIỀN VÀO CHỖ TRỐNG (20 CÂU - ĐÃ BỎ NHÃN DỄ, TRUNG BÌNH, KHÓ) ---
 QUIZ_TAB2 = [
-    # Dễ (10 câu)
-    {"q": "1. [Dễ] 妹妹穿了一条漂亮的新（  ）。", "options": ["裙子", "灯", "会议", "刻"], "ans": "裙子", "exp": "Đi với lượng từ 条 (tiáo) chỉ trang phục dài như 裙子 (váy)."},
-    {"q": "2. [Dễ] 现在是八点一（  ），会议马上开始了。", "options": ["刻", "瘦", "被", "像"], "ans": "刻", "exp": "一刻 = 15 phút. 八点一刻 = 8 giờ 15 phút."},
-    {"q": "3. [Dễ] 爷爷每天晚上都在房间里（  ）看新闻。", "options": ["上网", "生气", "提高", "留学"], "ans": "上网", "exp": "上网看新闻 = lên mạng xem tin tức."},
-    {"q": "4. [Dễ] 房间里太暗了，请把（  ）打开吧。", "options": ["灯", "裙子", "会议", "花"], "ans": "灯", "exp": "把灯打开 = bật đèn lên."},
-    {"q": "5. [Dễ] 这道题非常（  ），大家很快就做出来了。", "options": ["简单", "瘦", "生气", "被"], "ans": "简单", "exp": "简单 = đơn giản."},
-    {"q": "6. [Dễ] 经理正在三楼开一个重要的（  ）。", "options": ["会议", "裙子", "灯", "刻"], "ans": "会议", "exp": "开会议 = họp cuộc họp."},
-    {"q": "7. [Dễ] 你想喝热茶，（  ）想喝冷饮？", "options": ["还是", "除了", "被", "为"], "ans": "还是", "exp": "Câu hỏi lựa chọn giữa A và B dùng 还是."},
-    {"q": "8. [Dễ] 生病之后，他的身体比以前（  ）多了。", "options": ["瘦", "简单", "明白", "过去"], "ans": "瘦", "exp": "瘦 = gầy (sau khi ốm gầy đi)."},
-    {"q": "9. [Dễ] 你别（  ）了，有话好好说。", "options": ["生气", "简单", "提高", "明白"], "ans": "生气", "exp": "别生气 = đừng tức giận."},
-    {"q": "10. [Dễ] 桌子上摆着一盆新鲜的（  ）。", "options": ["花", "灯", "裙子", "会议"], "ans": "花", "exp": "一盆花 = một chậu hoa."},
-
-    # Trung bình (7 câu)
-    {"q": "11. [Trung bình] （  ）他以外，其他人今天都按时参加了活动。", "options": ["除了", "还是", "过去", "起来"], "ans": "除了", "exp": "Cấu trúc 除了...以外 = ngoài ... ra."},
-    {"q": "12. [Trung bình] 大家（  ）这次考试做了充分的准备。", "options": ["为", "被", "像", "刻"], "ans": "为", "exp": "为...做准备 = chuẩn bị cho ..."},
-    {"q": "13. [Trung bình] 经过这段时间的练习，他的汉语水平（  ）了不少。", "options": ["提高", "过去", "像", "为"], "ans": "提高", "exp": "水平提高 = trình độ nâng cao."},
-    {"q": "14. [Trung bình] 毕业以后，他打算去中国（  ）两年。", "options": ["留学", "上网", "生气", "提高"], "ans": "留学", "exp": "去中国留学 = đi Trung Quốc du học."},
-    {"q": "15. [Trung bình] 这个孩子长得非常（  ）他的爸爸。", "options": ["像", "为", "被", "除了"], "ans": "像", "exp": "长得很像 = trông rất giống."},
-    {"q": "16. [Trung bình] 老师讲得很清楚，我现在完全（  ）了。", "options": ["明白", "提高", "留学", "上网"], "ans": "明白", "exp": "听明白 = nghe hiểu rõ."},
-    {"q": "17. [Trung bình] 为了买这辆新车，他（  ）了不少钱。", "options": ["花", "瘦", "起", "刻"], "ans": "花", "exp": "花钱 = tiêu tốn tiền."},
-
-    # Khó (3 câu)
-    {"q": "18. [Khó] 他的自行车（  ）别人借走了，到现在还没还。", "options": ["被", "为", "像", "除了"], "ans": "被", "exp": "Câu bị động: Bị thể (自行车) + 被 + Chủ thể (别人) + V (借走)."},
-    {"q": "19. [Khó] 听到这个好消息，他高兴地站了（  ）。", "options": ["起来", "过去", "提高", "留学"], "ans": "起来", "exp": "站起来 = đứng dậy (bổ ngữ xu hướng 起来)."},
-    {"q": "20. [Khó] 那些（  ）的事情就别再提了，要向前看。", "options": ["过去", "简单", "明白", "提高"], "ans": "过去", "exp": "过去的事情 = những chuyện đã qua trong quá khứ."}
+    {"q": "1. 妹妹穿了一条漂亮的新（  ）。", "options": ["裙子", "灯", "会议", "刻"], "ans": "裙子", "exp": "Đi với lượng từ 条 (tiáo) chỉ trang phục dài như 裙子 (váy)."},
+    {"q": "2. 现在是八点一（  ），会议马上开始了。", "options": ["刻", "瘦", "被", "像"], "ans": "刻", "exp": "一刻 = 15 phút. 八点一刻 = 8 giờ 15 phút."},
+    {"q": "3. 爷爷每天晚上都在房间里（  ）看新闻。", "options": ["上网", "生气", "提高", "留学"], "ans": "上网", "exp": "上网看新闻 = lên mạng xem tin tức."},
+    {"q": "4. 房间里太暗了，请把（  ）打开吧。", "options": ["灯", "裙子", "会议", "花"], "ans": "灯", "exp": "把灯打开 = bật đèn lên."},
+    {"q": "5. 这道题非常（  ），大家很快就做出来了。", "options": ["简单", "瘦", "生气", "被"], "ans": "简单", "exp": "简单 = đơn giản."},
+    {"q": "6. 经理正在三楼开一个重要的（  ）。", "options": ["会议", "裙子", "灯", "刻"], "ans": "会议", "exp": "开会议 = họp cuộc họp."},
+    {"q": "7. 你想喝热茶，（  ）想喝冷饮？", "options": ["还是", "除了", "被", "为"], "ans": "还是", "exp": "Câu hỏi lựa chọn giữa A và B dùng 还是."},
+    {"q": "8. 生病之后，他的身体比以前（  ）多了。", "options": ["瘦", "简单", "明白", "过去"], "ans": "瘦", "exp": "瘦 = gầy (sau khi ốm gầy đi)."},
+    {"q": "9. 你别（  ）了，有话好好说。", "options": ["生气", "简单", "提高", "明白"], "ans": "生气", "exp": "别生气 = đừng tức giận."},
+    {"q": "10. 桌子上摆着一盆新鲜的（  ）。", "options": ["花", "灯", "裙子", "会议"], "ans": "花", "exp": "一盆花 = một chậu hoa."},
+    {"q": "11. （  ）他以外，其他人今天都按时参加了活动。", "options": ["除了", "还是", "过去", "起来"], "ans": "除了", "exp": "Cấu trúc 除了...以外 = ngoài ... ra."},
+    {"q": "12. 大家（  ）这次考试做了充分的准备。", "options": ["为", "被", "像", "刻"], "ans": "为", "exp": "为...做准备 = chuẩn bị cho ..."},
+    {"q": "13. 经过这段时间的练习，他的汉语水平（  ）了不少。", "options": ["提高", "过去", "像", "为"], "ans": "提高", "exp": "水平提高 = trình độ nâng cao."},
+    {"q": "14. 毕业以后，他打算去中国（  ）两年。", "options": ["留学", "上网", "生气", "提高"], "ans": "留学", "exp": "去中国留学 = đi Trung Quốc du học."},
+    {"q": "15. 这个孩子长得非常（  ）他的爸爸。", "options": ["像", "为", "被", "除了"], "ans": "像", "exp": "长得很像 = trông rất giống."},
+    {"q": "16. 老师讲得很清楚，我现在完全（  ）了。", "options": ["明白", "提高", "留学", "上网"], "ans": "明白", "exp": "听明白 = nghe hiểu rõ."},
+    {"q": "17. 为了买这辆新车，他（  ）了不少钱。", "options": ["花", "瘦", "起", "刻"], "ans": "花", "exp": "花钱 = tiêu tốn tiền."},
+    {"q": "18. 他的自行车（  ）别人借走了，到现在还没还。", "options": ["被", "为", "像", "除了"], "ans": "被", "exp": "Câu bị động: Bị thể (自行车) + 被 + Chủ thể (别人) + V (借走)."},
+    {"q": "19. 听到这个好消息，他高兴地站了（  ）。", "options": ["起来", "过去", "提高", "留学"], "ans": "起来", "exp": "站起来 = đứng dậy (bổ ngữ xu hướng 起来)."},
+    {"q": "20. 那些（  ）的事情就别再提了，要向前看。", "options": ["过去", "简单", "明白", "提高"], "ans": "过去", "exp": "过去的事情 = những chuyện đã qua trong quá khứ."}
 ]
 
 # --- TAB 3: SẮP XẾP CÂU (10 CÂU) ---
 QUIZ_TAB3 = [
     {"q": "1. Sắp xếp: 这条 / 裙子 / 买的 / 是 / 在超市", "options": ["这条裙子是在超市买的。", "是在超市买的这条裙子。", "超市买的是这条裙子。", "这条裙子买的是在超市。"], "ans": "这条裙子是在超市买的。", "exp": "Cấu trúc nhấn mạnh 是...的: Chủ ngữ + 是 + Trạng ngữ nơi chốn + Động từ + 的."},
     {"q": "2. Sắp xếp: 现在 / 八点 / 差一刻 / 是", "options": ["现在是八点差一刻。", "八点差一刻是现在。", "差一刻是八点现在。", "现在差一刻是八点。"], "ans": "现在是八点差一刻。", "exp": "Thời gian: Bây giờ là 8 giờ kém 15 (八点差一刻)."},
-    {"q": "3. Sắp xếp: 除了 / 他 / 都 / 来了 / 以外", "options": ["除了他以外大家都来了。", "Ngoài ra mọi người đều đến.", "除了大家都来了以外他。", "大家都来了除了他以外。"], "ans": "除了他以外大家都来了。", "exp": "Cấu trúc: 除了 + N + 以外，S + 都 + V."},
+    {"q": "3. Sắp xếp: 除了 / 他 / 都 / 来了 / 以外", "options": ["除了他以外大家都来了。", "除了大家以外他人都来了。", "除了大家都来了以外他。", "大家都来了除了他以外。"], "ans": "除了他以外大家都来了。", "exp": "Cấu trúc: 除了 + N + 以外，S + 都 + V."},
     {"q": "4. Sắp xếp: 喜欢 / 晚饭后 / 上网 / 查资料 / 我", "options": ["晚饭后我喜欢上网查资料。", "我上网查资料喜欢晚饭后。", "查资料晚饭后我上网。", "上网晚饭后我查资料。"], "ans": "晚饭后我喜欢上网查资料。", "exp": "Trạng ngữ chỉ thời gian (晚饭后) + Chủ ngữ (我) + Động từ (喜欢...)"},
     {"q": "5. Sắp xếp: 大家 / 为 / 成功 / 庆祝 / 他的", "options": ["大家为他的成功庆祝。", "大家庆祝为他的成功。", "他的成功为大家庆祝。", "为他的成功大家庆祝。"], "ans": "大家为他的成功庆祝。", "exp": "Mẫu câu: S + 为 + N + V (Mọi người chúc mừng vì thành công của anh ấy)."},
     {"q": "6. Sắp xếp: 站起来 / 请 / 慢慢地 / 大家", "options": ["请大家慢慢地站起来。", "大家请慢慢地站起来。", "慢慢地请大家站起来。", "站起来请大家慢慢地。"], "ans": "请大家慢慢地站起来。", "exp": "Câu cầu khiến lịch sự: 请 + S + Trạng ngữ + Động từ."},
@@ -368,18 +360,18 @@ QUIZ_TAB3 = [
     {"q": "10. Sắp xếp: 被 / 拿走了 / 字典 / 别人 / 我的", "options": ["我的字典被别人拿走了。", "别人被我的字典拿走了。", "我的字典拿走了被别人。", "被别人我的字典拿走了。"], "ans": "我的字典被别人拿走了。", "exp": "Câu bị động: Bị thể (我的字典) + 被 + Chủ thể (别人) + V + Bổ ngữ (拿走了)."}
 ]
 
-# --- TAB 4: CHỌN CÂU TRẢ LỜI CHO CÂU HỎI (10 CÂU) ---
+# --- TAB 4: CHỌN CÂU TRẢ LỜI CHO CÂU HỎI (10 CÂU - CÁCH DÒNG CÂU HỎI VÀ CÂU TRẢ LỜI) ---
 QUIZ_TAB4 = [
-    {"q": "1. 问：你想吃面条还是吃米饭？——答：（  ）", "options": ["给我一碗面条吧。", "我吃了一碗面条。", "面条很好吃。", "我不喜欢吃米饭。"], "ans": "给我一碗面条吧。", "exp": "Câu hỏi 还是 (lựa chọn) đưa ra đáp án cụ thể 'Cho tôi một bát mì đi'."},
-    {"q": "2. 问：你的汉语成绩怎么提高了这么快？——答：（  ）", "options": ["因为我每天都认真练习。", "考试题太难了。", "我还没有复习。", "明天就要考试了。"], "ans": "因为我每天都认真练习。", "exp": "Trả lời câu hỏi nguyên nhân 怎么 (tại sao) bằng 因为 (vì...)"},
-    {"q": "3. 问：房间里的灯怎么没开？——答：（  ）", "options": ["灯坏了，还没有换新的。", "外面天气很好。", "灯非常漂亮。", "我买了三个灯。"], "ans": "灯坏了，还没有换新的。", "exp": "Giải thích lý do đèn chưa bật: Đèn hỏng rồi chưa thay cái mới."},
-    {"q": "4. 问：他怎么突然生气了？——答：（  ）", "options": ["因为大家都没有听他的解释。", "他今天很高兴。", "他在办公室开会。", "他已经去睡觉了。"], "ans": "因为大家都没有听他的解释。", "exp": "Giải thích nguyên nhân tức giận: Vì mọi người không nghe giải thích của anh ấy."},
-    {"q": "5. 问：你的护照找不到了，怎么办？——答：（  ）", "options": ["别着急，一定被放在哪个包里了。", "护照是红色的。", "我已经买好机票了。", "护照 very 重要。"], "ans": "别着急，一定被放在哪个包里了。", "exp": "Đưa ra lời khuyên và động viên: Đừng lo, chắc chắn bị để ở trong túi nào rồi."},
-    {"q": "6. 问：你想买这件衬衫还是那条裙子？——答：（  ）", "options": ["我买那条裙子吧。", "我不喜欢衬衫。", "裙子很长。", "在超市买的。"], "ans": "我买那条裙子吧。", "exp": "Lựa chọn 1 trong 2 vế trong câu hỏi 还是."},
-    {"q": "7. 问：你的字典在哪里？——答：（  ）", "options": ["被同桌借走了。", "字典很有用。", "我已经买字典了。", "我不明白这个词。"], "ans": "被同桌借走了。", "exp": "Trả lời vị trí/trạng thái của cuốn từ điển: Bị bạn cùng bàn mượn đi rồi."},
-    {"q": "8. 问：你是什么时候去中国留学的？——答：（  ）", "options": ["我是去年九月去的。", "去中国学习汉语。", "留学非常好。", "我和朋友一起去。"], "ans": "我是去年九月去的。", "exp": "Cấu trúc 是...的 nhấn mạnh thời gian (tháng 9 năm ngoái)."},
-    {"q": "9. 问：除了汉语以外，你还会说什么语言？——答：（  ）", "options": ["我还会说英语。", "除了汉语我都喜欢。", "汉语不难。", "我会说汉语。"], "ans": "我还会说英语。", "exp": "Mẫu câu 除了...以外，还... (Ngoài tiếng Trung tôi còn biết nói tiếng Anh)."},
-    {"q": "10. 问：这道题你明白怎么做了吗？——答：（  ）", "options": ["明白了，谢谢老师！", "这道题很长。", "我不喜欢做题。", "老师正在讲课。"], "ans": "明白了，谢谢老师！", "exp": "Trả lời câu hỏi 明白了吗 (Đã hiểu rõ chưa): Hiểu rồi, cảm ơn thầy/cô!"}
+    {"q": "1. 问：你想吃面条还是吃米饭？<br>答：（  ）", "options": ["给我一碗面条吧。", "我吃了一碗面条。", "面条很好吃。", "我不喜欢吃米饭。"], "ans": "给我一碗面条吧。", "exp": "Câu hỏi 还是 (lựa chọn) đưa ra đáp án cụ thể 'Cho tôi một bát mì đi'."},
+    {"q": "2. 问：你的汉语成绩怎么提高了这么快？<br>答：（  ）", "options": ["因为我每天都认真练习。", "考试题太难了。", "我还没有复习。", "明天就要考试了。"], "ans": "因为我每天都认真练习。", "exp": "Trả lời câu hỏi nguyên nhân 怎么 (tại sao) bằng 因为 (vì...)"},
+    {"q": "3. 问：房间里的灯怎么没开？<br>答：（  ）", "options": ["灯坏了，还没有换新的。", "外面天气很好。", "灯非常漂亮。", "我买了三个灯。"], "ans": "灯坏了，还没有换新的。", "exp": "Giải thích lý do đèn chưa bật: Đèn hỏng rồi chưa thay cái mới."},
+    {"q": "4. 问：他怎么突然生气了？<br>答：（  ）", "options": ["因为大家都没有听他的解释。", "他今天很高兴。", "他在办公室开会。", "他已经去睡觉了。"], "ans": "因为大家都没有听他的解释。", "exp": "Giải thích nguyên nhân tức giận: Vì mọi người không nghe giải thích của anh ấy."},
+    {"q": "5. 问：你的护照找不到了，怎么办？<br>答：（  ）", "options": ["别着急，一定被放在哪个包里了。", "护照是红色的。", "我已经买好机票了。", "护照非常重要。"], "ans": "别着急，一定被放在哪个包里了。", "exp": "Đưa ra lời khuyên và động viên: Đừng lo, chắc chắn bị để ở trong túi nào rồi."},
+    {"q": "6. 问：你想买这件衬衫还是那条裙子？<br>答：（  ）", "options": ["我买那条裙子吧。", "我不喜欢衬衫。", "裙子很长。", "在超市买的。"], "ans": "我买那条裙子吧。", "exp": "Lựa chọn 1 trong 2 vế trong câu hỏi 还是."},
+    {"q": "7. 问：你的字典在哪里？<br>答：（  ）", "options": ["被同桌借走了。", "字典很有用。", "我已经买字典了。", "我不明白这个词。"], "ans": "被同桌借走了。", "exp": "Trả lời vị trí/trạng thái của cuốn từ điển: Bị bạn cùng bàn mượn đi rồi."},
+    {"q": "8. 问：你是什么时候去中国留学的？<br>答：（  ）", "options": ["我是去年九月去的。", "去中国学习汉语。", "留学非常好。", "我和朋友一起去。"], "ans": "我是去年九月去的。", "exp": "Cấu trúc 是...的 nhấn mạnh thời gian (tháng 9 năm ngoái)."},
+    {"q": "9. 问：除了汉语以外，你还会说什么语言？<br>答：（  ）", "options": ["我还会说英语。", "除了汉语我都喜欢。", "汉语不难。", "我会说汉语。"], "ans": "我还会说英语。", "exp": "Mẫu câu 除了...以外，还... (Ngoài tiếng Trung tôi còn biết nói tiếng Anh)."},
+    {"q": "10. 问：这道题你明白怎么做了吗？<br>答：（  ）", "options": ["明白了，谢谢老师！", "这道题很长。", "我不喜欢做题。", "老师正在讲课。"], "ans": "明白了，谢谢老师！", "exp": "Trả lời câu hỏi 明白了吗 (Đã hiểu rõ chưa): Hiểu rồi, cảm ơn thầy/cô!"}
 ]
 
 GROUPS_DATA = [
@@ -497,10 +489,10 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
                 st.rerun()
                 
             st.markdown("##### 📋 Bảng tổng hợp 20 từ vựng")
-            table_markdown = "| STT | Chữ Hán | Phiên âm | Từ loại | Nghĩa | Ví dụ |\n| :---: | :---: | :--- | :--- | :--- | :--- |\n"
+            table_rows = ["| STT | Chữ Hán | Phiên âm | Từ loại | Nghĩa | Ví dụ |", "| :---: | :---: | :--- | :--- | :--- | :--- |"]
             for v_i, v_item in enumerate(vocab_list):
-                table_markdown += f"| {v_i+1} | **{v_item['hanzi']}** | {v_item['pinyin']} | {v_item['type']} | {v_item['meaning']} | {v_item['example']} |\n"
-            st.markdown(table_markdown)
+                table_rows.append(f"| {v_i+1} | **{v_item['hanzi']}** | {v_item['pinyin']} | {v_item['type']} | {v_item['meaning']} | {v_item['example']} |")
+            st.markdown("\n".join(table_rows))
 
         st.markdown("---")
 
