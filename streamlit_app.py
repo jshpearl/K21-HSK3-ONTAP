@@ -589,8 +589,39 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
 
         def render_quiz_section(sub_quiz_data, sub_key):
             submitted_flag = f"sub_submitted_{group_info['id']}_{sub_key}"
+            res_key = f"res_{submitted_flag}"
+            
             if submitted_flag not in st.session_state:
                 st.session_state[submitted_flag] = False
+
+            # Hiển thị thông báo chúc mừng, điểm số & trạng thái nộp bài BỀN VỮNG nếu đã nộp
+            if st.session_state[submitted_flag] and res_key in st.session_state:
+                res = st.session_state[res_key]
+                
+                st.markdown("""
+                <div class="congrats-card">
+                    🎉 Chúc mừng bạn đã làm xong! Chăm chỉ quá!
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.metric("Kết quả làm bài", f"{res['score']} / {res['total']} câu đúng", f"{res['pct']:.1f}%")
+
+                if res["sheet_ok"]:
+                    st.success("✅ Đã gửi điểm về Sheet cho cô Bảo Ngọc")
+                else:
+                    st.error("❌ Gửi không thành công, hãy chụp màn hình gửi cô Bảo Ngọc")
+
+                if res["score"] < res["total"]:
+                    st.markdown("""
+                    <div style="background-color: #FEF3C7; border: 2px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-top: 10px; margin-bottom: 15px; color: #92400E; font-weight: 800; text-align: center; font-size: 1.05rem;">
+                        💡 Bạn hãy kiểm tra lại danh sách câu hỏi bên dưới để xem đáp án đúng và lời giải thích chi tiết cho các câu chưa làm đúng nhé!
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                if res["unans"] > 0:
+                    st.warning(f"Lưu ý: Còn {res['unans']} câu chưa chọn đáp án.")
+                
+                st.markdown("<hr style='margin: 15px 0;'>", unsafe_allow_html=True)
 
             user_ans = {}
             with st.form(key=f"form_{group_info['id']}_{sub_key}"):
@@ -632,7 +663,6 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
                 if not user_name or not user_name.strip() or user_name.strip().lower() in ["", "học viên hsk3"]:
                     st.warning("⚠️ Vui lòng nhập Họ và tên ở ô thông tin phía trên trước khi nộp bài!")
                 else:
-                    st.session_state[submitted_flag] = True
                     score = 0
                     unans = 0
                     for q_i, q_data in enumerate(sub_quiz_data):
@@ -645,25 +675,6 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
                     total = len(sub_quiz_data)
                     pct = (score / total) * 100
 
-                    st.markdown("""
-                    <div class="congrats-card">
-                        🎉 Chúc mừng bạn đã làm xong! Chăm chỉ quá!
-                    </div>
-                    """, unsafe_allow_html=True)
-
-                    st.metric("Kết quả làm bài", f"{score} / {total} câu đúng", f"{pct:.1f}%")
-
-                    # Lời nhắc kiểm tra lại các câu chưa đúng
-                    if score < total:
-                        st.markdown("""
-                        <div style="background-color: #FEF3C7; border: 2px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-top: 10px; margin-bottom: 15px; color: #92400E; font-weight: 800; text-align: center; font-size: 1.05rem;">
-                            💡 Bạn hãy kiểm tra lại danh sách câu hỏi bên dưới để xem đáp án đúng và lời giải thích chi tiết cho các câu chưa làm đúng nhé!
-                        </div>
-                        """, unsafe_allow_html=True)
-
-                    if unans > 0:
-                        st.warning(f"Lưu ý: Còn {unans} câu chưa chọn đáp án.")
-
                     with st.spinner("Đang gửi điểm về Google Sheet cho cô Bảo Ngọc..."):
                         ok, msg = send_to_google_sheet(
                             user_name=user_name.strip(),
@@ -672,11 +683,16 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
                             total=total,
                             percentage=pct
                         )
-                        if ok:
-                            st.success("✅ Đã gửi điểm về Sheet cho cô Bảo Ngọc")
-                        else:
-                            st.error("❌ Gửi không thành công, hãy chụp màn hình gửi cô Bảo Ngọc")
 
+                    st.session_state[submitted_flag] = True
+                    st.session_state[res_key] = {
+                        "score": score,
+                        "total": total,
+                        "pct": pct,
+                        "unans": unans,
+                        "sheet_ok": ok,
+                        "sheet_msg": msg
+                    }
                     st.rerun()
 
         with sub_tab1:
