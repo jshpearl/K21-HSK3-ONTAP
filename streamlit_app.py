@@ -455,6 +455,15 @@ GROUPS_DATA = [
 
 ORDERED_GROUPS = list(reversed(GROUPS_DATA))
 
+# Tự động trộn vị trí các đáp án (A, B, C, D) ngẫu nhiên cho từng câu hỏi
+for _grp in GROUPS_DATA:
+    for _tkey in ["tab1", "tab2", "tab3", "tab4"]:
+        for _qidx, _qitem in enumerate(_grp[_tkey]):
+            import random as _rnd
+            _rng = _rnd.Random(hash(_qitem["q"]) + _qidx + 42)
+            _rng.shuffle(_qitem["options"])
+
+
 # Webhook URL cố định của cô Bảo Ngọc
 WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbykR1r2_VTPvB5SVrDSMhmBqQhWYdQjPacrLBmoCIsE2WbBqGA0mBDZA0uUmLd2-Hli/exec"
 
@@ -643,6 +652,15 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
                     """, unsafe_allow_html=True)
 
                     st.metric("Kết quả làm bài", f"{score} / {total} câu đúng", f"{pct:.1f}%")
+
+                    # Lời nhắc kiểm tra lại các câu chưa đúng
+                    if score < total:
+                        st.markdown("""
+                        <div style="background-color: #FEF3C7; border: 2px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-top: 10px; margin-bottom: 15px; color: #92400E; font-weight: 800; text-align: center; font-size: 1.05rem;">
+                            💡 Bạn hãy kiểm tra lại danh sách câu hỏi bên dưới để xem đáp án đúng và lời giải thích chi tiết cho các câu chưa làm đúng nhé!
+                        </div>
+                        """, unsafe_allow_html=True)
+
                     if unans > 0:
                         st.warning(f"Lưu ý: Còn {unans} câu chưa chọn đáp án.")
 
