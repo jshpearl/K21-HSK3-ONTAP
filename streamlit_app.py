@@ -25,75 +25,92 @@ st.markdown("""
     [data-testid="stDecoration"] { display: none !important; }
     [data-testid="stStatusWidget"] { display: none !important; }
 
-    /* 2. Tổng thể & Chữ màu đen sắc nét */
+    /* 2. Tổng thể & Chữ màu đen / đậm sắc nét */
     .stApp {
-        background-color: #F8FAFC !important;
+        background: linear-gradient(180deg, #FAF5FF 0%, #F8FAFC 100%) !important;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
-        color: #000000 !important;
+        color: #0F172A !important;
     }
     
     body, p, div, span, label, li, h1, h2, h3, h4, h5, h6 {
-        color: #000000 !important;
+        color: #0F172A !important;
     }
 
     .main .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 2rem !important;
+        padding-top: 1.2rem !important;
+        padding-bottom: 2.5rem !important;
         padding-left: 0.8rem !important;
         padding-right: 0.8rem !important;
         max-width: 680px !important;
     }
 
-    /* Header tiêu đề */
+    /* Header tiêu đề cao cấp */
     .main-title {
-        color: #D32F2F !important;
+        color: #BE123C !important;
         text-align: center;
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 900;
-        margin-bottom: 0.2rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.3rem;
+        text-shadow: 0 2px 4px rgba(190, 18, 60, 0.08);
     }
     .sub-title {
-        color: #00695C !important;
+        color: #0D9488 !important;
         text-align: center;
         font-size: 1.05rem;
         font-weight: 700;
         margin-bottom: 1.2rem;
     }
 
-    /* Ô điền tên: Nền màu trắng, viền đen */
+    /* Ô điền tên: Nền màu trắng, viền sắc nét, khung nổi bật */
+    div[data-testid="stTextInput"] {
+        background-color: #FFFFFF;
+        border-radius: 14px;
+        padding: 10px 14px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        border: 1.5px solid #E2E8F0;
+        margin-bottom: 16px;
+    }
     div[data-testid="stTextInput"] input {
         background-color: #FFFFFF !important;
-        border: 2px solid #000000 !important;
+        border: 2px solid #334155 !important;
         color: #000000 !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
         font-weight: 700 !important;
-        font-size: 1rem !important;
-        padding: 8px 12px !important;
+        font-size: 1.05rem !important;
+        padding: 10px 14px !important;
+        transition: all 0.2s ease !important;
+    }
+    div[data-testid="stTextInput"] input:focus {
+        border-color: #7C3AED !important;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15) !important;
     }
     div[data-testid="stTextInput"] label {
-        color: #000000 !important;
+        color: #0F172A !important;
         font-weight: 800 !important;
-        font-size: 1rem !important;
+        font-size: 1.02rem !important;
     }
 
-    /* Các đáp án lựa chọn: Nền màu nhạt, viền bo tròn nhẹ, chữ đen */
+    /* Các đáp án lựa chọn: Nền màu nhạt pastel, viền bo tròn, chữ đen sắc nét */
     div[role="radiogroup"] {
         gap: 8px !important;
-        margin-top: 4px !important;
-        margin-bottom: 8px !important;
+        margin-top: 6px !important;
+        margin-bottom: 10px !important;
     }
     div[role="radiogroup"] label {
         background-color: #FFF5F7 !important;
         border: 1.5px solid #FBCFE8 !important;
-        border-radius: 10px !important;
-        padding: 8px 14px !important;
+        border-radius: 12px !important;
+        padding: 9px 16px !important;
         width: 100% !important;
-        margin: 2px 0 !important;
+        margin: 3px 0 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02) !important;
         transition: all 0.2s ease !important;
     }
     div[role="radiogroup"] label:hover {
         background-color: #FCE7F3 !important;
         border-color: #F472B6 !important;
+        transform: translateX(2px) !important;
     }
     div[role="radiogroup"] label p {
         color: #000000 !important;
@@ -101,54 +118,66 @@ st.markdown("""
         font-weight: 700 !important;
     }
 
-    /* Nút Nộp bài kiểm tra: Nền màu nhạt, chữ đen */
+    /* Nút Nộp bài kiểm tra: Nền màu hồng nhạt pastel, viền nổi, chữ đen */
     div.stButton > button[kind="formSubmit"] {
-        background-color: #FFE4E6 !important;
+        background: linear-gradient(135deg, #FFE4E6 0%, #FECDD3 100%) !important;
         color: #000000 !important;
-        border: 2px solid #FDA4AF !important;
-        border-radius: 10px !important;
-        font-size: 1.1rem !important;
+        border: 2px solid #F43F5E !important;
+        border-radius: 12px !important;
+        font-size: 1.12rem !important;
         font-weight: 900 !important;
-        padding: 10px 20px !important;
-        box-shadow: 0 2px 6px rgba(244, 63, 94, 0.15) !important;
+        padding: 12px 24px !important;
+        box-shadow: 0 4px 14px rgba(244, 63, 94, 0.18) !important;
+        transition: all 0.2s ease !important;
     }
     div.stButton > button[kind="formSubmit"]:hover {
-        background-color: #FECDD3 !important;
-        border-color: #F43F5E !important;
+        background: linear-gradient(135deg, #FECDD3 0%, #FDA4AF 100%) !important;
+        border-color: #E11D48 !important;
         color: #000000 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 18px rgba(244, 63, 94, 0.25) !important;
     }
 
-    /* Nút bấm chuyển thẻ / xem bảng: Nền trắng, chữ đen, viền rõ ràng */
+    /* Nút bấm chuyển thẻ / xem bảng: Nền trắng, chữ đen, viền sắc nét */
     div.stButton > button {
         background-color: #FFFFFF !important;
-        color: #000000 !important;
-        border: 1.5px solid #CBD5E1 !important;
-        border-radius: 8px !important;
-        font-weight: 700 !important;
-        font-size: 0.95rem !important;
+        color: #0F172A !important;
+        border: 2px solid #CBD5E1 !important;
+        border-radius: 10px !important;
+        font-weight: 800 !important;
+        font-size: 0.98rem !important;
+        padding: 8px 16px !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04) !important;
+        transition: all 0.2s ease !important;
     }
     div.stButton > button:hover {
-        background-color: #F1F5F9 !important;
-        border-color: #94A3B8 !important;
-        color: #000000 !important;
+        background-color: #F8FAFC !important;
+        border-color: #64748B !important;
+        color: #0F172A !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
     }
 
     /* Tiêu đề câu hỏi màu xanh đậm nổi bật */
     .question-title {
         color: #1E3A8A !important;
-        font-size: 1.1rem !important;
+        font-size: 1.15rem !important;
         font-weight: 800 !important;
-        margin-top: 10px !important;
+        margin-top: 12px !important;
         margin-bottom: 6px !important;
         line-height: 1.5 !important;
+        padding: 6px 12px;
+        border-left: 4px solid #3B82F6;
+        background-color: #EFF6FF;
+        border-radius: 0 10px 10px 0;
     }
 
     /* Flashcard 3D Flip Card Style (Quizlet Model) */
     .flip-card {
         background-color: transparent;
         width: 100%;
-        max-width: 500px;
-        height: 260px;
+        max-width: 520px;
+        height: 270px;
         perspective: 1000px;
         margin: 15px auto;
         cursor: pointer;
@@ -170,106 +199,144 @@ st.markdown("""
         height: 100%;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
     .flip-card-front {
-        background: #FFFFFF;
-        border: 3px solid #F472B6;
+        background: linear-gradient(145deg, #FFFFFF 0%, #FFF5F7 100%);
+        border: 3px solid #EC4899;
     }
     .flip-card-back {
-        background: #F0FDF4;
-        border: 3px solid #22C55E;
+        background: linear-gradient(145deg, #FFFFFF 0%, #F0FDF4 100%);
+        border: 3px solid #10B981;
         transform: rotateY(180deg);
     }
     .card-hanzi {
         font-size: 3.8rem;
-        color: #000000 !important;
+        color: #0F172A !important;
         font-weight: 900;
         margin-bottom: 6px;
         line-height: 1.1;
     }
     .card-pinyin-back {
-        font-size: 1.4rem;
-        color: #DC2626 !important;
+        font-size: 1.45rem;
+        color: #E11D48 !important;
         font-weight: 800;
         margin-bottom: 4px;
     }
     .card-meaning {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
         color: #1E3A8A !important;
         font-weight: 800;
     }
     .card-pos {
         display: inline-block;
-        background-color: #E0E7FF;
-        color: #1E1B4B !important;
-        border: 1px solid #6366F1;
-        padding: 2px 8px;
-        border-radius: 8px;
+        background-color: #EEF2FF;
+        color: #3730A3 !important;
+        border: 1.5px solid #818CF8;
+        padding: 2px 10px;
+        border-radius: 10px;
         font-size: 0.85rem;
-        font-weight: 700;
+        font-weight: 800;
         margin-left: 6px;
     }
     .card-example {
         font-size: 0.95rem;
-        color: #15803D !important;
+        color: #065F46 !important;
         font-weight: 700;
         margin-top: 8px;
-        background-color: #DCFCE7;
-        padding: 6px 12px;
-        border-radius: 8px;
-        border: 1px solid #86EFAC;
+        background-color: #ECFDF5;
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1.5px solid #A7F3D0;
     }
 
     /* Các Tab Bài tập có màu Hồng Nhạt Pastel khi kích hoạt */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 6px;
-        margin-bottom: 12px;
+        gap: 8px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid #E2E8F0;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 42px;
+        height: 44px;
         white-space: nowrap;
         background-color: #F1F5F9;
         border-radius: 10px 10px 0px 0px;
-        padding: 6px 12px;
+        padding: 8px 16px;
         font-weight: 800;
-        color: #000000 !important;
+        color: #334155 !important;
+        border: 1px solid #E2E8F0;
+        border-bottom: none;
+        transition: all 0.2s ease;
     }
     .stTabs [aria-selected="true"] {
         background-color: #FFD1DC !important;
         color: #881337 !important;
-        border-bottom: 3px solid #F43F5E !important;
+        border: 2px solid #F43F5E !important;
+        border-bottom: none !important;
+        font-weight: 900 !important;
+    }
+
+    /* Bảng từ vựng cao cấp */
+    .stMarkdown table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1.5px solid #CBD5E1;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+    .stMarkdown th {
+        background-color: #F1F5F9 !important;
+        color: #0F172A !important;
+        font-weight: 800 !important;
+        padding: 10px 12px !important;
+        border-bottom: 2px solid #CBD5E1 !important;
+        text-align: left !important;
+    }
+    .stMarkdown td {
+        padding: 10px 12px !important;
+        border-bottom: 1px solid #E2E8F0 !important;
+        color: #0F172A !important;
+        font-size: 0.98rem !important;
+    }
+    .stMarkdown tr:nth-child(even) td {
+        background-color: #F8FAFC !important;
     }
 
     /* Dòng chữ cô Bảo Ngọc màu Tím Pastel Đậm trang trọng */
     .teacher-footer {
         text-align: center;
         color: #6B46C1 !important;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         font-weight: 900;
-        margin-top: 40px;
-        margin-bottom: 25px;
-        padding-top: 15px;
+        margin-top: 45px;
+        margin-bottom: 30px;
+        padding-top: 18px;
         border-top: 2px dashed #D8B4FE;
+        letter-spacing: 1px;
     }
 
     .congrats-card {
-        background-color: #DCFCE7;
+        background: linear-gradient(135deg, #DCFCE7 0%, #F0FDF4 100%);
         border: 2px solid #16A34A;
-        border-radius: 12px;
-        padding: 15px;
+        border-radius: 14px;
+        padding: 16px;
         text-align: center;
-        color: #000000 !important;
-        font-size: 1.3rem;
+        color: #065F46 !important;
+        font-size: 1.35rem;
         font-weight: 900;
         margin-top: 15px;
         margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.12);
     }
 </style>
 """, unsafe_allow_html=True)
