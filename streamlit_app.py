@@ -366,9 +366,9 @@ QUIZ_TAB4 = [
     {"q": "2. 问：你的汉语成绩怎么提高了这么快？<br>答：（  ）", "options": ["因为我每天都认真练习。", "考试题太难了。", "我还没有复习。", "明天就要考试了。"], "ans": "因为我每天都认真练习。", "exp": "Trả lời câu hỏi nguyên nhân 怎么 (tại sao) bằng 因为 (vì...)"},
     {"q": "3. 问：房间里的灯怎么没开？<br>答：（  ）", "options": ["灯坏了，还没有换新的。", "外面天气很好。", "灯非常漂亮。", "我买了三个灯。"], "ans": "灯坏了，还没有换新的。", "exp": "Giải thích lý do đèn chưa bật: Đèn hỏng rồi chưa thay cái mới."},
     {"q": "4. 问：他怎么突然生气了？<br>答：（  ）", "options": ["因为大家都没有听他的解释。", "他今天很高兴。", "他在办公室开会。", "他已经去睡觉了。"], "ans": "因为大家都没有听他的解释。", "exp": "Giải thích nguyên nhân tức giận: Vì mọi người không nghe giải thích của anh ấy."},
-    {"q": "5. 问：你的护照找不到了，怎么办？<br>答：（  ）", "options": ["别着急，一定被放在哪个包里了。", "护照是红色的。", "我已经买好机票了。", "护照非常重要。"], "ans": "别着急，一定被放在哪个包里了。", "exp": "Đưa ra lời khuyên và động viên: Đừng lo, chắc chắn bị để ở trong túi nào rồi."},
+    {"q": "5. 问： your 护照找不到了，怎么办？<br>答：（  ）".replace(" your ", "你的"), "options": ["别着急，一定被放在哪个包里了。", "护照是红色的。", "我已经买好机票了。", "护照非常重要。"], "ans": "别着急，一定被放在哪个包里了。", "exp": "Đưa ra lời khuyên và động viên: Đừng lo, chắc chắn bị để ở trong túi nào rồi."},
     {"q": "6. 问：你想买这件衬衫还是那条裙子？<br>答：（  ）", "options": ["我买那条裙子吧。", "我不喜欢衬衫。", "裙子很长。", "在超市买的。"], "ans": "我买那条裙子吧。", "exp": "Lựa chọn 1 trong 2 vế trong câu hỏi 还是."},
-    {"q": "7. 问：你的字典在哪里？<br>答：（  ）", "options": ["被同桌借走了。", "字典很有用。", "我已经买字典了。", "我不明白这个词。"], "ans": "被同桌借走了。", "exp": "Trả lời vị trí/trạng thái của cuốn từ điển: Bị bạn cùng bàn mượn đi rồi."},
+    {"q": "7. 问： your 字典在哪里？<br>答：（  ）".replace(" your ", "你的"), "options": ["被同桌借走了。", "字典很有用。", "我已经买字典了。", "我不明白这个词。"], "ans": "被同桌借走了。", "exp": "Trả lời vị trí/trạng thái của cuốn từ điển: Bị bạn cùng bàn mượn đi rồi."},
     {"q": "8. 问：你是什么时候去中国留学的？<br>答：（  ）", "options": ["我是去年九月去的。", "去中国学习汉语。", "留学非常好。", "我和朋友一起去。"], "ans": "我是去年九月去的。", "exp": "Cấu trúc 是...的 nhấn mạnh thời gian (tháng 9 năm ngoái)."},
     {"q": "9. 问：除了汉语以外，你还会说什么语言？<br>答：（  ）", "options": ["我还会说英语。", "除了汉语我都喜欢。", "汉语不难。", "我会说汉语。"], "ans": "我还会说英语。", "exp": "Mẫu câu 除了...以外，还... (Ngoài tiếng Trung tôi còn biết nói tiếng Anh)."},
     {"q": "10. 问：这道题你明白怎么做了吗？<br>答：（  ）", "options": ["明白了，谢谢老师！", "这道题很长。", "我不喜欢做题。", "老师正在讲课。"], "ans": "明白了，谢谢老师！", "exp": "Trả lời câu hỏi 明白了吗 (Đã hiểu rõ chưa): Hiểu rồi, cảm ơn thầy/cô!"}
@@ -392,8 +392,10 @@ ORDERED_GROUPS = list(reversed(GROUPS_DATA))
 WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbykR1r2_VTPvB5SVrDSMhmBqQhWYdQjPacrLBmoCIsE2WbBqGA0mBDZA0uUmLd2-Hli/exec"
 
 def send_to_google_sheet(user_name, group_name, score, total, percentage):
+    vn_tz = datetime.timezone(datetime.timedelta(hours=7))
+    vn_now = datetime.datetime.now(vn_tz)
     payload = {
-        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp": vn_now.strftime("%Y-%m-%d %H:%M:%S"),
         "name": user_name,
         "group": group_name,
         "score": f"{score}/{total}",
@@ -413,7 +415,7 @@ st.markdown('<div class="main-title">✨ CHINH PHỤC TỪ VỰNG HSK 3 ✨</div
 st.markdown('<div class="sub-title">Cùng học và ôn từ vựng HSK3 nhé</div>', unsafe_allow_html=True)
 
 # Khung nhập tên người học (Nền màu trắng, viền đen sắc nét)
-user_name = st.text_input("👤 Họ và tên người học (Nhập tên để nộp điểm):", value="Học viên HSK3", key="user_name_input")
+user_name = st.text_input("👤 Họ và tên người học (Bắt buộc nhập tên để nộp bài):", value="", placeholder="Vui lòng nhập họ và tên của bạn tại đây...", key="user_name_input")
 
 # Dựng các Tab Nhóm (Nhóm mới cập nhật nằm ở đầu)
 group_titles = [g["title"] for g in ORDERED_GROUPS]
@@ -551,43 +553,46 @@ for idx, group_info in enumerate(ORDERED_GROUPS):
                 sub_btn = st.form_submit_button("🚀 Nộp bài kiểm tra", use_container_width=True)
 
             if sub_btn:
-                st.session_state[submitted_flag] = True
-                score = 0
-                unans = 0
-                for q_i, q_data in enumerate(sub_quiz_data):
-                    ans = user_ans.get(q_i)
-                    if ans is None:
-                        unans += 1
-                    elif ans == q_data["ans"]:
-                        score += 1
+                if not user_name or not user_name.strip() or user_name.strip().lower() in ["", "học viên hsk3"]:
+                    st.warning("⚠️ Vui lòng nhập Họ và tên ở ô thông tin phía trên trước khi nộp bài!")
+                else:
+                    st.session_state[submitted_flag] = True
+                    score = 0
+                    unans = 0
+                    for q_i, q_data in enumerate(sub_quiz_data):
+                        ans = user_ans.get(q_i)
+                        if ans is None:
+                            unans += 1
+                        elif ans == q_data["ans"]:
+                            score += 1
 
-                total = len(sub_quiz_data)
-                pct = (score / total) * 100
+                    total = len(sub_quiz_data)
+                    pct = (score / total) * 100
 
-                st.markdown("""
-                <div class="congrats-card">
-                    🎉 Chúc mừng bạn đã làm xong! Chăm chỉ quá!
-                </div>
-                """, unsafe_allow_html=True)
+                    st.markdown("""
+                    <div class="congrats-card">
+                        🎉 Chúc mừng bạn đã làm xong! Chăm chỉ quá!
+                    </div>
+                    """, unsafe_allow_html=True)
 
-                st.metric("Kết quả làm bài", f"{score} / {total} câu đúng", f"{pct:.1f}%")
-                if unans > 0:
-                    st.warning(f"Lưu ý: Còn {unans} câu chưa chọn đáp án.")
+                    st.metric("Kết quả làm bài", f"{score} / {total} câu đúng", f"{pct:.1f}%")
+                    if unans > 0:
+                        st.warning(f"Lưu ý: Còn {unans} câu chưa chọn đáp án.")
 
-                with st.spinner("Đang gửi điểm về Google Sheet cho cô Bảo Ngọc..."):
-                    ok, msg = send_to_google_sheet(
-                        user_name=user_name,
-                        group_name=f"{group_info['title']} - {sub_key}",
-                        score=score,
-                        total=total,
-                        percentage=pct
-                    )
-                    if ok:
-                        st.success("✅ Đã gửi điểm về Sheet cho cô Bảo Ngọc")
-                    else:
-                        st.error("❌ Gửi không thành công, hãy chụp màn hình gửi cô Bảo Ngọc")
+                    with st.spinner("Đang gửi điểm về Google Sheet cho cô Bảo Ngọc..."):
+                        ok, msg = send_to_google_sheet(
+                            user_name=user_name.strip(),
+                            group_name=f"{group_info['title']} - {sub_key}",
+                            score=score,
+                            total=total,
+                            percentage=pct
+                        )
+                        if ok:
+                            st.success("✅ Đã gửi điểm về Sheet cho cô Bảo Ngọc")
+                        else:
+                            st.error("❌ Gửi không thành công, hãy chụp màn hình gửi cô Bảo Ngọc")
 
-                st.rerun()
+                    st.rerun()
 
         with sub_tab1:
             render_quiz_section(group_info["tab1"], "Kiểm tra từ vựng")
