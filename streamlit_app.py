@@ -239,13 +239,7 @@ group_info = ORDERED_GROUPS[group_idx]
 # Assign 1 of the 7 Pastel Color Themes based on group_idx
 theme = PASTEL_THEMES[group_idx % 7]
 
-# Display 7-Pastel Color Bar Badge
-st.markdown(f"""
-<div style="background:{theme['badge_bg']}; border:2px solid {theme['border']}; border-radius:14px; padding:10px 16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-    <span style="font-weight:800; color:{theme['badge_text']}; font-size:1.05rem;">{theme['emoji']} {group_info['title']} - Chủ đề {theme['name']}</span>
-    <span style="font-size:0.9rem; font-weight:700;">🎨 7 Sắc Pastel: 🌸 🟣 🔵 🟢 🟡 🟠 🌰</span>
-</div>
-""", unsafe_allow_html=True)
+
 
 st.markdown(f"### 📌 {group_info['title']} (20 từ vựng & Bài tập)")
 
