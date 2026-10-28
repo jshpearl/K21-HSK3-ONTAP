@@ -35,7 +35,67 @@ def send_to_google_sheet(user_name, group_name, score, total, percentage):
     except Exception as e:
         return False, str(e)
 
-# --- CSS STYLING (FONT TAHOMA, PASTEL TƯƠI TẮN) ---
+# --- BẢNG MÀU 7 SẮC PASTEL (HỒNG, TÍM, XANH DƯƠNG, XANH LÁ, VÀNG, CAM, XÁM NÂU) ---
+PASTEL_THEMES = [
+    {
+        "name": "Hồng Pastel", "emoji": "🌸",
+        "bg_gradient": "linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 100%)",
+        "card_bg": "#FDF2F8", "border": "#EC4899", "title_color": "#831843",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #FDF2F8 100%)", "fc_front_border": "#FBCFE8", "fc_front_text": "#9D174D",
+        "fc_back_bg": "linear-gradient(135deg, #DB2777 0%, #F472B6 100%)", "fc_back_border": "#BE185D",
+        "badge_bg": "#FCE7F3", "badge_text": "#9D174D"
+    },
+    {
+        "name": "Tím Pastel", "emoji": "🟣",
+        "bg_gradient": "linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%)",
+        "card_bg": "#FAF5FF", "border": "#A855F7", "title_color": "#581C87",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #FAF5FF 100%)", "fc_front_border": "#DDD6FE", "fc_front_text": "#6B21A8",
+        "fc_back_bg": "linear-gradient(135deg, #9333EA 0%, #C084FC 100%)", "fc_back_border": "#7E22CE",
+        "badge_bg": "#F3E8FF", "badge_text": "#6B21A8"
+    },
+    {
+        "name": "Xanh Dương Pastel", "emoji": "🔵",
+        "bg_gradient": "linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)",
+        "card_bg": "#F0F9FF", "border": "#0EA5E9", "title_color": "#0C4A6E",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%)", "fc_front_border": "#BAE6FD", "fc_front_text": "#0369A1",
+        "fc_back_bg": "linear-gradient(135deg, #0284C7 0%, #38BDF8 100%)", "fc_back_border": "#0369A1",
+        "badge_bg": "#E0F2FE", "badge_text": "#0369A1"
+    },
+    {
+        "name": "Xanh Lá Pastel", "emoji": "🟢",
+        "bg_gradient": "linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)",
+        "card_bg": "#F0FDF4", "border": "#22C55E", "title_color": "#14532D",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%)", "fc_front_border": "#BBF7D0", "fc_front_text": "#15803D",
+        "fc_back_bg": "linear-gradient(135deg, #16A34A 0%, #4ADE80 100%)", "fc_back_border": "#15803D",
+        "badge_bg": "#DCFCE7", "badge_text": "#15803D"
+    },
+    {
+        "name": "Vàng Pastel", "emoji": "🟡",
+        "bg_gradient": "linear-gradient(135deg, #FEFCE8 0%, #FEF9C3 100%)",
+        "card_bg": "#FEFCE8", "border": "#EAB308", "title_color": "#713F12",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #FEFCE8 100%)", "fc_front_border": "#FEF08A", "fc_front_text": "#A16207",
+        "fc_back_bg": "linear-gradient(135deg, #CA8A04 0%, #FACC15 100%)", "fc_back_border": "#A16207",
+        "badge_bg": "#FEF9C3", "badge_text": "#854D0E"
+    },
+    {
+        "name": "Cam Pastel", "emoji": "🟠",
+        "bg_gradient": "linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)",
+        "card_bg": "#FFF7ED", "border": "#F97316", "title_color": "#7C2D12",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #FFF7ED 100%)", "fc_front_border": "#FED7AA", "fc_front_text": "#C2410C",
+        "fc_back_bg": "linear-gradient(135deg, #EA580C 0%, #FB923C 100%)", "fc_back_border": "#C2410C",
+        "badge_bg": "#FFEDD5", "badge_text": "#9A3412"
+    },
+    {
+        "name": "Xám Nâu Pastel", "emoji": "🌰",
+        "bg_gradient": "linear-gradient(135deg, #FAFAF9 0%, #F5F5F4 100%)",
+        "card_bg": "#FAFAF9", "border": "#A8A29E", "title_color": "#44403C",
+        "fc_front_bg": "linear-gradient(135deg, #FFFFFF 0%, #FAFAF9 100%)", "fc_front_border": "#E7E5E4", "fc_front_text": "#57534E",
+        "fc_back_bg": "linear-gradient(135deg, #78350F 0%, #B45309 100%)", "fc_back_border": "#57534E",
+        "badge_bg": "#F5F5F4", "badge_text": "#44403C"
+    }
+]
+
+# --- GLOBAL STYLING WITH 7-PASTEL RAINBOW AURORA ---
 st.markdown("""
 <style>
     /* 1. Ẩn Sidebar & Header mặc định */
@@ -49,19 +109,19 @@ st.markdown("""
     [data-testid="stDecoration"] { display: none !important; }
     [data-testid="stStatusWidget"] { display: none !important; }
 
-    /* 2. Áp dụng Font Tahoma & Nền Pastel dịu nhẹ */
+    /* 2. Áp dụng Font Tahoma & Nền Pastel 7 màu hòa quyện */
     html, body, [class*="css"], .stApp {
         font-family: 'Tahoma', Geneva, Verdana, sans-serif !important;
     }
     .stApp {
-        background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 50%, #EFF6FF 100%) !important;
+        background: linear-gradient(135deg, #FFF5F7 0%, #FEF9C3 20%, #FFEDD5 40%, #DCFCE7 60%, #E0F2FE 80%, #F3E8FF 100%) !important;
     }
 
-    /* 3. Header Box */
+    /* 3. Header Box Với Cầu Vồng 7 Sắc Pastel */
     .header-box {
         text-align: center;
         padding: 26px 20px;
-        background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+        background: linear-gradient(135deg, #EC4899 0%, #A855F7 20%, #0EA5E9 40%, #22C55E 60%, #EAB308 80%, #F97316 100%);
         border-radius: 20px;
         color: white;
         margin-bottom: 25px;
@@ -72,7 +132,7 @@ st.markdown("""
         font-weight: 900;
         margin: 0;
         letter-spacing: 0.5px;
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
     }
     .sub-title {
         font-size: 1.05rem;
@@ -85,29 +145,12 @@ st.markdown("""
         background: white;
         padding: 20px;
         border-radius: 16px;
-        border: 2px solid #F3E8FF;
-        box-shadow: 0 4px 15px rgba(168, 85, 247, 0.05);
+        border: 2px solid #E0E7FF;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
         margin-bottom: 25px;
     }
 
-    /* 5. Khung Câu hỏi (Question Box) - In đậm & Phân biệt rõ */
-    .question-card {
-        background-color: #F3E8FF;
-        border-left: 5px solid #8B5CF6;
-        border-radius: 12px;
-        padding: 14px 18px;
-        margin-top: 15px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.08);
-    }
-    .question-title {
-        color: #4C1D95 !important;
-        font-size: 1.15rem;
-        font-weight: 800 !important;
-        line-height: 1.5;
-    }
-
-    /* 6. Flashcard 3D */
+    /* 5. Flashcard 3D Structure */
     .flip-card {
         background-color: transparent;
         width: 100%;
@@ -141,19 +184,8 @@ st.markdown("""
         padding: 20px;
         box-shadow: 0 8px 25px rgba(0,0,0,0.06);
     }
-    .flip-card-front {
-        background: linear-gradient(135deg, #FFFFFF 0%, #FAF5FF 100%);
-        border: 3px solid #DDD6FE;
-        color: #5B21B6;
-    }
-    .flip-card-back {
-        background: linear-gradient(135deg, #7C3AED 0%, #C084FC 100%);
-        color: white;
-        transform: rotateY(180deg);
-        border: 3px solid #6D28D9;
-    }
 
-    /* 7. Footer Chữ ký */
+    /* 6. Footer Chữ ký */
     .teacher-footer {
         text-align: center;
         color: #6B21A8;
@@ -162,7 +194,7 @@ st.markdown("""
         margin-top: 40px;
         margin-bottom: 25px;
         padding-top: 15px;
-        border-top: 2px dashed #D8B4FE;
+        border-top: 2px dashed #CBD5E1;
     }
 
     .congrats-card {
@@ -180,7 +212,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- LOAD DATA TỪ FILE DATA.JSON (TỰ TÌM FILE TÙY CHỈNH THEO ĐƯỜNG DẪN TUYỆT ĐỐI) ---
+# --- LOAD DATA TỪ FILE DATA.JSON ---
 @st.cache_data
 def load_all_data():
     json_path = os.path.join(os.path.dirname(__file__), 'data.json')
@@ -197,11 +229,23 @@ st.markdown('<div class="user-info-card">', unsafe_allow_html=True)
 user_name = st.text_input("👤 Họ và tên người học (Bắt buộc nhập tên để nộp bài):", value="", placeholder="Vui lòng nhập họ và tên của bạn tại đây...", key="user_name_input")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- GROUP SELECTOR (LAZY LOADING FOR MAXIMUM PERFORMANCE) ---
+# --- GROUP SELECTOR ---
 group_titles = [g["title"] for g in ORDERED_GROUPS]
 selected_group_title = st.selectbox("📌 Chọn Nhóm từ vựng để học và làm bài tập:", options=group_titles, index=0)
 
-group_info = next(g for g in ORDERED_GROUPS if g["title"] == selected_group_title)
+group_idx = next(i for i, g in enumerate(ORDERED_GROUPS) if g["title"] == selected_group_title)
+group_info = ORDERED_GROUPS[group_idx]
+
+# Assign 1 of the 7 Pastel Color Themes based on group_idx
+theme = PASTEL_THEMES[group_idx % 7]
+
+# Display 7-Pastel Color Bar Badge
+st.markdown(f"""
+<div style="background:{theme['badge_bg']}; border:2px solid {theme['border']}; border-radius:14px; padding:10px 16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+    <span style="font-weight:800; color:{theme['badge_text']}; font-size:1.05rem;">{theme['emoji']} {group_info['title']} - Chủ đề {theme['name']}</span>
+    <span style="font-size:0.9rem; font-weight:700;">🎨 7 Sắc Pastel: 🌸 🟣 🔵 🟢 🟡 🟠 🌰</span>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown(f"### 📌 {group_info['title']} (20 từ vựng & Bài tập)")
 
@@ -221,13 +265,13 @@ curr_item = vocab_list[curr_idx]
 flip_card_html = f"""
 <div class="flip-card">
   <div class="flip-card-inner">
-    <div class="flip-card-front">
-      <div style="font-size:0.95rem; color:#8B5CF6; font-weight:800; margin-bottom:8px;">✦ CLICK / DI CHUỘT ĐỂ XEM NGHĨA ✦</div>
-      <div style="font-size:3.2rem; font-weight:900; color:#4C1D95;">{curr_item['hanzi']}</div>
+    <div class="flip-card-front" style="background:{theme['fc_front_bg']}; border:3px solid {theme['fc_front_border']}; color:{theme['fc_front_text']};">
+      <div style="font-size:0.95rem; font-weight:800; margin-bottom:8px; opacity:0.8;">✦ CLICK / DI CHUỘT ĐỂ XEM NGHĨA ✦</div>
+      <div style="font-size:3.2rem; font-weight:900;">{curr_item['hanzi']}</div>
     </div>
-    <div class="flip-card-back">
+    <div class="flip-card-back" style="background:{theme['fc_back_bg']}; border:3px solid {theme['fc_back_border']}; color:white;">
       <div style="font-size:2.2rem; font-weight:900; margin-bottom:4px;">{curr_item['hanzi']}</div>
-      <div style="font-size:1.3rem; font-weight:700; color:#FDE047; margin-bottom:6px;">[{curr_item['pinyin']}] • {curr_item['type']}</div>
+      <div style="font-size:1.3rem; font-weight:700; color:#FEF08A; margin-bottom:6px;">[{curr_item['pinyin']}] • {curr_item['type']}</div>
       <div style="font-size:1.4rem; font-weight:900; margin-bottom:10px;">👉 {curr_item['meaning']}</div>
       <div style="font-size:1.05rem; background:rgba(255,255,255,0.2); padding:8px 12px; border-radius:10px;">💡 {curr_item['example']}</div>
     </div>
@@ -242,7 +286,7 @@ with col_prev:
         st.session_state[fc_key] = (curr_idx - 1) % len(vocab_list)
         st.rerun()
 with col_num:
-    st.markdown(f"<div style='text-align:center; font-weight:800; font-size:1.1rem; padding-top:6px; color:#6B21A8;'>Thẻ {curr_idx + 1} / {len(vocab_list)}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align:center; font-weight:800; font-size:1.1rem; padding-top:6px; color:{theme['title_color']};'>Thẻ {curr_idx + 1} / {len(vocab_list)}</div>", unsafe_allow_html=True)
 with col_next:
     if st.button("Từ tiếp ➡️", key=f"next_{group_info['id']}", use_container_width=True):
         st.session_state[fc_key] = (curr_idx + 1) % len(vocab_list)
@@ -260,7 +304,7 @@ if st.session_state[show_table_key]:
         table_md += f"| {v_i} | **{v_data['hanzi']}** | {v_data['pinyin']} | *{v_data['type']}* | {v_data['meaning']} | {v_data['example']} |\n"
     st.markdown(table_md)
 
-st.markdown("<hr style='border:1px dashed #D8B4FE; margin:25px 0;'>", unsafe_allow_html=True)
+st.markdown(f"<hr style='border:1px dashed {theme['border']}; margin:25px 0;'>", unsafe_allow_html=True)
 
 # PHẦN 2: BÀI TẬP 4 TABS
 def render_quiz_section(sub_quiz_data, sub_key):
@@ -286,8 +330,13 @@ def render_quiz_section(sub_quiz_data, sub_key):
 
     user_ans = {}
     for q_i, q_data in enumerate(sub_quiz_data):
-        # Khung câu hỏi nổi bật
-        st.markdown(f'''<div class="question-card"><div class="question-title">Câu {q_i + 1}: {q_data['q']}</div></div>''', unsafe_allow_html=True)
+        # Khung câu hỏi thiết kế theo chủ đề Pastel của nhóm
+        q_card_html = f"""
+        <div style="background-color:{theme['card_bg']}; border-left:5px solid {theme['border']}; border-radius:12px; padding:14px 18px; margin-top:15px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <div style="color:{theme['title_color']}; font-size:1.12rem; font-weight:800; line-height:1.5;">Câu {q_i + 1}: {q_data['q']}</div>
+        </div>
+        """
+        st.markdown(q_card_html, unsafe_allow_html=True)
 
         shuffled_key = f"shuffled_opts_{group_info['id']}_{sub_key}_{q_i}"
         if shuffled_key not in st.session_state:
