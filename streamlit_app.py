@@ -3,10 +3,12 @@ import json
 import random
 import requests
 import datetime
+import os
+import re
 
 # --- CẤU HÌNH TRANG ---
 st.set_page_config(
-    page_title="HSK 3 Master - Cô Bảo Ngọc",
+    page_title="HSK 3 Vocabulary Master - Cô Bảo Ngọc",
     page_icon="🎓",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -34,9 +36,10 @@ def send_to_google_sheet(user_name, group_name, score, total, percentage):
     except Exception as e:
         return False, str(e)
 
-# --- CSS STYLING ---
+# --- CSS STYLING (PASTEL NHẸ NHÀNG, FONT TAHOMA, CÂU HỎI MÀU NỔI BẬT) ---
 st.markdown("""
 <style>
+    /* 1. Ẩn Sidebar & Streamlit Header/Footer */
     [data-testid="stSidebar"] { display: none !important; }
     [data-testid="stSidebarNav"] { display: none !important; }
     #MainMenu { visibility: hidden !important; }
@@ -47,41 +50,51 @@ st.markdown("""
     [data-testid="stDecoration"] { display: none !important; }
     [data-testid="stStatusWidget"] { display: none !important; }
 
-    .stApp {
-        background: linear-gradient(135deg, #FFF5F7 0%, #F3E8FF 50%, #E0F2FE 100%) !important;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    /* 2. Ép font chữ Tahoma cho TOÀN BỘ ứng dụng */
+    html, body, [class*="st-"], .stApp, button, input, select, textarea, div, span, p, label {
+        font-family: 'Tahoma', Geneva, Verdana, sans-serif !important;
     }
 
+    /* 3. Nền Gradient Pastel dịu mát */
+    .stApp {
+        background: linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 50%, #EFF6FF 100%) !important;
+    }
+
+    /* 4. Header Box - Pastel Purple & Pink */
     .header-box {
         text-align: center;
-        padding: 25px 20px;
-        background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+        padding: 24px 20px;
+        background: linear-gradient(135deg, #C084FC 0%, #F472B6 100%);
         border-radius: 20px;
         color: white;
-        margin-bottom: 25px;
-        box-shadow: 0 10px 25px rgba(168, 85, 247, 0.3);
+        margin-bottom: 22px;
+        box-shadow: 0 8px 20px rgba(192, 132, 252, 0.25);
     }
     .main-title {
-        font-size: 2.2rem;
+        font-size: 2.1rem;
         font-weight: 900;
         margin: 0;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+        font-family: 'Tahoma', Geneva, sans-serif !important;
     }
     .sub-title {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         opacity: 0.95;
-        margin-top: 8px;
+        margin-top: 6px;
+        font-family: 'Tahoma', Geneva, sans-serif !important;
     }
 
+    /* 5. Khung thông tin học viên */
     .user-info-card {
-        background: white;
-        padding: 20px;
+        background: #FFFFFF;
+        padding: 18px 20px;
         border-radius: 16px;
-        border: 2px solid #F3E8FF;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        margin-bottom: 25px;
+        border: 2px solid #E9D5FF;
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.05);
+        margin-bottom: 22px;
     }
 
+    /* 6. Flashcard 3D */
     .flip-card {
         background-color: transparent;
         width: 100%;
@@ -113,7 +126,7 @@ st.markdown("""
         align-items: center;
         justify-content: center;
         padding: 20px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        box-shadow: 0 6px 20px rgba(147, 51, 234, 0.08);
     }
     .flip-card-front {
         background: linear-gradient(135deg, #FFFFFF 0%, #FAF5FF 100%);
@@ -121,42 +134,92 @@ st.markdown("""
         color: #5B21B6;
     }
     .flip-card-back {
-        background: linear-gradient(135deg, #7C3AED 0%, #C084FC 100%);
+        background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
         color: white;
         transform: rotateY(180deg);
-        border: 3px solid #6D28D9;
+        border: 3px solid #7C3AED;
     }
 
+    /* 7. Style Câu hỏi - In đậm + Màu sắc Pastel đậm nổi bật (Phân biệt rõ với đáp án) */
+    .question-box {
+        background-color: #F3E8FF;
+        border-left: 5px solid #8B5CF6;
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+    .question-title {
+        font-size: 1.12rem;
+        font-weight: 800;
+        color: #4C1D95;
+        line-height: 1.5;
+        font-family: 'Tahoma', Geneva, sans-serif !important;
+    }
+
+    /* 8. Tùy chỉnh Các thẻ Tabs pastel */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #F3E8FF;
+        padding: 6px;
+        border-radius: 14px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-weight: 700;
+        color: #6B21A8;
+        background-color: transparent;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #FFFFFF !important;
+        color: #7E22CE !important;
+        box-shadow: 0 2px 8px rgba(126, 34, 206, 0.12);
+    }
+
+    /* 9. Nút bấm Nộp bài & Thao tác */
+    div.stButton > button {
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        font-family: 'Tahoma', Geneva, sans-serif !important;
+        transition: all 0.2s ease !important;
+    }
+
+    /* 10. Chữ ký giáo viên */
     .teacher-footer {
         text-align: center;
-        color: #6B21A8;
+        color: #7E22CE;
         font-size: 1.35rem;
         font-weight: 900;
         margin-top: 40px;
         margin-bottom: 25px;
         padding-top: 15px;
-        border-top: 2px dashed #D8B4FE;
+        border-top: 2px dashed #E9D5FF;
+        font-family: 'Tahoma', Geneva, sans-serif !important;
     }
 
+    /* 11. Bảng điểm Chúc mừng */
     .congrats-card {
         background-color: #DCFCE7;
-        border: 2px solid #16A34A;
-        border-radius: 12px;
+        border: 2px solid #22C55E;
+        border-radius: 14px;
         padding: 15px;
         text-align: center;
-        color: #000000 !important;
-        font-size: 1.3rem;
-        font-weight: 900;
+        color: #15803D !important;
+        font-size: 1.25rem;
+        font-weight: 800;
         margin-top: 10px;
         margin-bottom: 12px;
+        font-family: 'Tahoma', Geneva, sans-serif !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- LOAD DATA (CACHED) ---
+# --- LOAD DATA (ĐỌC ĐƯỜNG DẪN TUYỆT ĐỐI AN TOÀN TRÊN STREAMLIT CLOUD) ---
 @st.cache_data
 def load_data():
-    with open('data.json', 'r', encoding='utf-8') as f:
+    json_path = os.path.join(os.path.dirname(__file__), "data.json")
+    with open(json_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 ORDERED_GROUPS = load_data()
@@ -169,7 +232,7 @@ st.markdown('<div class="user-info-card">', unsafe_allow_html=True)
 user_name = st.text_input("👤 Họ và tên người học (Bắt buộc nhập tên để nộp bài):", value="", placeholder="Vui lòng nhập họ và tên của bạn tại đây...", key="user_name_input")
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- GROUP SELECTOR (LAZY LOADING FOR MAXIMUM PERFORMANCE) ---
+# --- GROUP SELECTOR ---
 group_titles = [g["title"] for g in ORDERED_GROUPS]
 selected_group_title = st.selectbox("📌 Chọn Nhóm từ vựng để học và làm bài tập:", options=group_titles, index=0)
 
@@ -232,7 +295,7 @@ if st.session_state[show_table_key]:
         table_md += f"| {v_i} | **{v_data['hanzi']}** | {v_data['pinyin']} | *{v_data['type']}* | {v_data['meaning']} | {v_data['example']} |\n"
     st.markdown(table_md)
 
-st.markdown("<hr style='border:1px dashed #D8B4FE; margin:25px 0;'>", unsafe_allow_html=True)
+st.markdown("<hr style='border:1px dashed #DDD6FE; margin:25px 0;'>", unsafe_allow_html=True)
 
 # PHẦN 2: BÀI TẬP 4 TABS
 def render_quiz_section(sub_quiz_data, sub_key):
@@ -244,20 +307,12 @@ def render_quiz_section(sub_quiz_data, sub_key):
 
     if st.session_state[submitted_flag] and res_data_flag in st.session_state:
         res = st.session_state[res_data_flag]
-        st.markdown('''
-        <div class="congrats-card">
-            🎉 Chúc mừng bạn đã làm xong! Chăm chỉ quá!
-        </div>
-        ''', unsafe_allow_html=True)
+        st.markdown('''<div class="congrats-card">🎉 Chúc mừng bạn đã làm xong! Chăm chỉ quá!</div>''', unsafe_allow_html=True)
 
         st.metric("Kết quả làm bài", f"{res['score']} / {res['total']} câu đúng", f"{res['pct']:.1f}%")
 
         if res['score'] < res['total']:
-            st.markdown('''
-            <div style="background-color: #FEF3C7; border: 2px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-top: 10px; margin-bottom: 15px; color: #92400E; font-weight: 800; text-align: center; font-size: 1.05rem;">
-                💡 Bạn hãy kiểm tra lại danh sách câu hỏi bên dưới để xem đáp án đúng và lời giải thích chi tiết cho các câu làm chưa chính xác nhé!
-            </div>
-            ''', unsafe_allow_html=True)
+            st.markdown('''<div style="background-color: #FEF3C7; border: 2px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-top: 10px; margin-bottom: 15px; color: #92400E; font-weight: 800; text-align: center; font-size: 1.05rem;">💡 Bạn hãy kiểm tra lại danh sách câu hỏi bên dưới để xem đáp án đúng và lời giải thích chi tiết cho các câu làm chưa chính xác nhé!</div>''', unsafe_allow_html=True)
 
         if res['ok']:
             st.success(f"✅ Đã gửi điểm về Sheet cho cô Bảo Ngọc ({user_name.strip()}: {res['score']}/{res['total']})")
@@ -266,7 +321,11 @@ def render_quiz_section(sub_quiz_data, sub_key):
 
     user_ans = {}
     for q_i, q_data in enumerate(sub_quiz_data):
-        st.markdown(f"**Câu {q_i + 1}:** {q_data['q']}", unsafe_allow_html=True)
+        # 🟢 XÓA DƯ SỐ ĐẦU CÂU (Loại bỏ các số thứ tự thừa như "1. ", "2. ")
+        clean_q_text = re.sub(r"^\d+\.\s*", "", q_data['q'])
+
+        # 🟢 ĐỊNH DẠNG CÂU HỎI IN ĐẬM VỚI MÀU TÍM PASTEL ĐẬM NỔI BẬT KHÁC VỚI ĐÁP ÁN
+        st.markdown(f'''<div class="question-box"><div class="question-title">Câu {q_i + 1}: {clean_q_text}</div></div>''', unsafe_allow_html=True)
 
         shuffled_key = f"shuffled_opts_{group_info['id']}_{sub_key}_{q_i}"
         if shuffled_key not in st.session_state:
@@ -278,7 +337,7 @@ def render_quiz_section(sub_quiz_data, sub_key):
 
         radio_key = f"q_{group_info['id']}_{sub_key}_{q_i}"
         ans = st.radio(
-            f"Chọn đáp án câu {q_i + 1}:",
+            f"Chọn đáp án cho câu {q_i + 1}:",
             opts,
             key=radio_key,
             index=None,
@@ -294,7 +353,7 @@ def render_quiz_section(sub_quiz_data, sub_key):
             else:
                 st.warning(f"⚠️ Chưa trả lời. Đáp án đúng là: **{q_data['ans']}** — 💡 {q_data['exp']}")
 
-        st.markdown("<hr style='margin:10px 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:12px 0; border:0; border-top:1px dashed #E9D5FF;'>", unsafe_allow_html=True)
 
     col_btn1, col_btn2 = st.columns([1, 1])
     with col_btn1:
